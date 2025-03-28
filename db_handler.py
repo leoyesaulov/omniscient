@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pymongo
 from check import Check
 from urllib.parse import quote_plus
@@ -18,3 +20,18 @@ def put_check(check: Check) -> None:
 
 def is_check_in_db(check: Check) -> bool:
     return __checks.find_one({"id": check.id}) is not None
+
+def get_month():
+    today = datetime.today()
+    month_begin = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    print(f"Getting from {month_begin} as from month beginning")
+    query = {"date": {"$gte": month_begin}}
+    return __checks.find(query)
+
+def spent_this_month() -> float:
+    cursor = get_month()
+    out = 0
+    for check in cursor:
+        out += int(check["amount"]*100)
+
+    return out/100

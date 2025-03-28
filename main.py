@@ -20,8 +20,8 @@ def __get_24h_statement():
     return statement
 
 def __process_check(check: dict):
-    result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'])
-    if not db_handler.is_check_in_db(result):
+    result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
+    if not db_handler.is_check_in_db(result) and all([check['operationAmount'] <= 0, check['currencyCode'] != 980]):
         db_handler.put_check(result)
 
 def __process_statement(statement: list):
@@ -29,6 +29,15 @@ def __process_statement(statement: list):
         __process_check(check)
 
 def __check():
+    __statement = __get_24h_statement()
+    __process_statement(__statement)
+
+def __get_month_statement():
+    time = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    statement = requests.get(__get_url(time), headers={'X-Token': __token}).json()
+    return statement
+
+def __add_month():
     __statement = __get_24h_statement()
     __process_statement(__statement)
 
@@ -47,11 +56,22 @@ async def __listen_to_input():
             print("pong")
             continue
 
+        if  input_arr[0] == "month":
+            print(f"You have spent {db_handler.spent_this_month()} this month on groceries and stuff")
+            continue
+
+        if input_arr[0] == "add_this_month":
+            __add_month()
+            continue
+
         # if no if block hit
         print(
             f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{input_arr[0]}'.")
 
 async def __run():
+    __add_month()
+    print("Database seems up to date.")
+    await sleep(60)
     while True:
         __check()
         print(f"Automated update has been performed at {datetime.now()}.")

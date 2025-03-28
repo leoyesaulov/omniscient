@@ -6,6 +6,7 @@ from check import Check
 from asyncio import sleep
 from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv, get_key
+from currency_codes import get_currency_by_numeric_code
 
 
 def __to_unix(value: datetime):
@@ -22,7 +23,7 @@ def __get_24h_statement():
 def __process_check(check: dict):
     result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
     if not db_handler.is_check_in_db(result) and all([check['operationAmount'] <= 0, check['currencyCode'] != 980]):
-        print(f"Leo has spent {result.amount} at {result.description} at {result.date}.")
+        print(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
         db_handler.put_check(result)
 
 def __process_statement(statement: list):
@@ -39,7 +40,7 @@ def __get_month_statement():
     return statement
 
 def __add_month():
-    __statement = __get_24h_statement()
+    __statement = __get_month_statement()
     __process_statement(__statement)
 
 async def __listen_to_input():
@@ -58,7 +59,7 @@ async def __listen_to_input():
             continue
 
         if  input_arr[0] == "month":
-            print(f"You have spent {db_handler.spent_this_month()} this month on groceries and stuff")
+            db_handler.spent_this_month()
             continue
 
         if input_arr[0] == "add_this_month":

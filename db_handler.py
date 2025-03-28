@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
-
 import pymongo
 from check import Check
+from datetime import datetime
 from urllib.parse import quote_plus
 from dotenv import load_dotenv, find_dotenv, get_key
 
@@ -24,14 +23,19 @@ def is_check_in_db(check: Check) -> bool:
 def get_month():
     today = datetime.today()
     month_begin = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    print(f"Getting from {month_begin} as from month beginning")
+    print(f"Getting checks from {month_begin}")
     query = {"date": {"$gte": month_begin}}
     return __checks.find(query)
 
-def spent_this_month() -> float:
+def spent_this_month() -> None:
     cursor = get_month()
-    out = 0
+    out: int = 0
+    counter: int = 0
     for check in cursor:
         out += int(check["amount"]*100)
+        counter += 1
 
-    return out/100
+    avg: float = round(out / counter / 100, 2)
+    out: float = out / 100
+    print(f"You have spent {out} Euro this month on groceries and stuff.")
+    print(f"Your checks averaged {avg} Euro this month.")

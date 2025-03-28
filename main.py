@@ -22,6 +22,7 @@ def __get_24h_statement():
 def __process_check(check: dict):
     result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
     if not db_handler.is_check_in_db(result) and all([check['operationAmount'] <= 0, check['currencyCode'] != 980]):
+        print(f"Leo has spent {result.amount} at {result.description} at {result.date}.")
         db_handler.put_check(result)
 
 def __process_statement(statement: list):

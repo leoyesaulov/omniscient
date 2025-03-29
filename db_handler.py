@@ -1,4 +1,5 @@
 import pymongo
+import requests
 from check import Check
 from datetime import datetime
 from urllib.parse import quote_plus
@@ -35,7 +36,15 @@ def spent_this_month() -> None:
         out += int(check["amount"]*100)
         counter += 1
 
-    avg: float = round(out / counter / 100, 2)
+    check_avg: float = round(out / counter / 100, 2)
+    day_avg: float = round(out / datetime.today().day / 100, 2)
     out: float = out / 100
-    print(f"You have spent {out} Euro this month on groceries and stuff.")
-    print(f"Your checks averaged {avg} Euro this month.")
+    msg = f'''You have spent {out} Euro this month on groceries and stuff.
+Your checks averaged {check_avg} Euro this month.
+Your expenses averaged {day_avg} Euro per day this month.'''
+    print(msg)                                                                  #ToDo: tg bot, fix input
+    send_to_bot(msg)
+
+def send_to_bot(msg: str):
+    response = requests.post(url="http://127.0.0.1:6969/sendtobot", json={"text": msg}).json()
+    print(f"Sent the message {msg} to bot,\n Received response: {response}")

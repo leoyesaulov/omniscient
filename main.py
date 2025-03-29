@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv, get_key
 from currency_codes import get_currency_by_numeric_code
 
+__env = find_dotenv(".env")
+load_dotenv(dotenv_path=__env)
+__token = get_key(__env, 'X_TOKEN')
+__acc = get_key(__env, 'ACCOUNT')
 
 def __to_unix(value: datetime):
     return time.mktime(value.timetuple())
@@ -24,6 +28,7 @@ def __process_check(check: dict):
     result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
     if not db_handler.is_check_in_db(result) and all([check['operationAmount'] <= 0, check['currencyCode'] != 980]):
         print(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
+        db_handler.send_to_bot(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
         db_handler.put_check(result)
 
 def __process_statement(statement: list):
@@ -66,6 +71,10 @@ async def __listen_to_input():
             __add_month()
             continue
 
+        if input_arr[0] == "bot_test":
+            db_handler.send_to_bot("test")
+            continue
+
         # if no if block hit
         print(
             f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{input_arr[0]}'.")
@@ -77,7 +86,7 @@ async def __run():
     while True:
         __check()
         print(f"Automated update has been performed at {datetime.now()}.")
-        await sleep(3600)
+        await sleep(600)
 
 
 async def __main():

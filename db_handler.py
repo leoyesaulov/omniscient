@@ -42,7 +42,7 @@ def spent_this_month() -> None:
     msg = f'''You have spent {out} Euro this month on groceries and stuff.
 Your checks averaged {check_avg} Euro this month.
 Your expenses averaged {day_avg} Euro per day this month.'''
-    print(msg)                                                                  #ToDo: tg bot, fix input
+    print(msg)                                                                  #ToDo: fix input
     send_to_bot(msg)
 
 def send_to_bot(msg: str):

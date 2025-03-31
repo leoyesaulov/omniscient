@@ -1,8 +1,8 @@
 import pymongo
 import requests
 from check import Check
-from datetime import datetime
 from urllib.parse import quote_plus
+from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv, get_key
 
 __dotenv_path = find_dotenv()
@@ -28,7 +28,7 @@ def get_month():
     query = {"date": {"$gte": month_begin}}
     return __checks.find(query)
 
-def spent_this_month() -> None:
+def monthly_report() -> None:
     cursor = get_month()
     out: int = 0
     counter: int = 0
@@ -42,9 +42,33 @@ def spent_this_month() -> None:
     msg = f'''You have spent {out} Euro this month on groceries and stuff.
 Your checks averaged {check_avg} Euro this month.
 Your expenses averaged {day_avg} Euro per day this month.'''
-    print(msg)                                                                  #ToDo: fix input
+    print(msg)
     send_to_bot(msg)
+
+def get_day():
+    today = datetime.today()
+    day_begin = today - timedelta(days=1)
+    print(f"Getting checks from {day_begin}")
+    query = {"date": {"$gte": day_begin}}
+    return __checks.find(query)
+
+
+def daily_report() -> None:
+    cursor = get_day()
+    out: int = 0
+    counter: int = 0
+    for check in cursor:
+        out += int(check["amount"] * 100)
+        counter += 1
+
+    check_avg: float = round(out / counter / 100, 2)
+    out: float = out / 100
+    msg = f'''You have spent {out} Euro in the past 24h on groceries and stuff.
+    Your checks averaged {check_avg} Euro this day.'''
+    print(msg)
+    send_to_bot(msg)
+
 
 def send_to_bot(msg: str):
     response = requests.post(url="http://127.0.0.1:6969/sendtobot", json={"text": msg}).json()
-    print(f"Sent the message {msg} to bot,\n Received response: {response}")
+    print(f"Sent the message to bot.\nReceived response: {response}")

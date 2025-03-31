@@ -1,3 +1,4 @@
+import sys
 import time
 import asyncio
 import requests
@@ -27,7 +28,7 @@ def __get_24h_statement():
 def __process_check(check: dict):
     result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
     if not db_handler.is_check_in_db(result) and all([check['operationAmount'] <= 0, check['currencyCode'] != 980]):
-        print(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
+        __print(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
         db_handler.send_to_bot(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
         db_handler.put_check(result)
 
@@ -64,11 +65,8 @@ async def __listen_to_input():
             continue
 
         if  input_arr[0] == "month":
-            db_handler.spent_this_month()
-            continue
-
-        if input_arr[0] == "add_this_month":
             __add_month()
+            db_handler.monthly_report()
             continue
 
         if input_arr[0] == "bot_test":
@@ -76,17 +74,28 @@ async def __listen_to_input():
             continue
 
         # if no if block hit
-        print(
-            f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{input_arr[0]}'.")
+        print(f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{input_arr[0]}'.")
+
+def __print(msg: str) -> None:
+    print(f"\r{msg}", flush=True)
+    print(">>> ", end="", flush=True)
 
 async def __run():
     __add_month()
     print("Database seems up to date.")
     await sleep(60)
+
     while True:
         __check()
-        print(f"Automated update has been performed at {datetime.now()}.")
-        await sleep(600)
+
+        now = datetime.now()
+        __print(f"Automated update has been performed at {now}.")
+        if now.hour == 21:
+            db_handler.daily_report()
+            if now.month < (now + timedelta(days=1)).month:
+                db_handler.monthly_report()
+
+        await sleep(3600)
 
 
 async def __main():

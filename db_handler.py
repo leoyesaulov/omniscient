@@ -19,7 +19,7 @@ def put_check(check: Check) -> None:
     __checks.insert_one(check.__dict__)
 
 def is_check_in_db(check: Check) -> bool:
-    return __checks.find_one({"id": check.id}) is not None
+    return bool(__checks.find_one({"id": check.id}))
 
 def get_month():
     today = datetime.today()
@@ -61,14 +61,15 @@ def daily_report() -> None:
         out += int(check["amount"] * 100)
         counter += 1
 
-    check_avg: float = round(out / counter / 100, 2)
-    out: float = out / 100
-    msg = f'''You have spent {out} Euro in the past 24h on groceries and stuff.
-    Your checks averaged {check_avg} Euro this day.'''
-    print(msg)
-    send_to_bot(msg)
+    if counter > 0:
+        check_avg: float = round(out / counter / 100, 2)
+        out: float = out / 100
+        msg = f'''You have spent {out} Euro in the past 24h on groceries and stuff.
+        Your checks averaged {check_avg} Euro this day.'''
+        print(msg)
+        send_to_bot(msg)
 
 
 def send_to_bot(msg: str):
     response = requests.post(url="http://127.0.0.1:6969/sendtobot", json={"text": msg}).json()
-    print(f"Sent the message to bot.\nReceived response: {response}")
+    print(f"\rSent the message to bot.\nReceived response: {response}")

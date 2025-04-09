@@ -65,7 +65,7 @@ def daily_report() -> None:
         check_avg: float = round(out / counter / 100, 2)
         out: float = out / 100
         msg = f'''You have spent {out} Euro in the past 24h on groceries and stuff.
-        Your checks averaged {check_avg} Euro this day.'''
+Your checks averaged {check_avg} Euro this day.'''
         print(msg)
         send_to_bot(msg)
 

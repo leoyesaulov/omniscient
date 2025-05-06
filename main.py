@@ -49,6 +49,9 @@ def __add_month():
     __statement = __get_month_statement()
     __process_statement(__statement)
 
+def __add_excel(path: str):
+    print("Adding excel not implemented yet")
+
 async def __listen_to_input():
     loop = asyncio.get_event_loop()
     while True:
@@ -71,6 +74,10 @@ async def __listen_to_input():
 
         if input_arr[0] == "bot_test":
             db_handler.send_to_bot("test")
+            continue
+
+        if input_arr[0] == "add_excel":
+            print("Add excel command received. Functionality no implemented yet")
             continue
 
         # if no if block hit

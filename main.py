@@ -1,7 +1,9 @@
-import sys
 import time
+import string
+import random
 import asyncio
 import requests
+import argparse
 import db_handler
 from check import Check
 from asyncio import sleep
@@ -9,10 +11,11 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv, get_key
 from currency_codes import get_currency_by_numeric_code
 
-__env = find_dotenv(".env")
-load_dotenv(dotenv_path=__env)
-__token = get_key(__env, 'X_TOKEN')
-__acc = get_key(__env, 'ACCOUNT')
+
+def generate_id(length=17):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for i in range(length))
+
 
 def __to_unix(value: datetime):
     return time.mktime(value.timetuple())
@@ -57,31 +60,43 @@ async def __listen_to_input():
     while True:
         user_input = await loop.run_in_executor(None, input, ">>> ")
 
-        input_arr = user_input.lower().split()
+        parsed = parser.parse_args(user_input.split())
+        cmd = parsed.cmd[0]
 
-        if input_arr[0] == "refresh":
+        if cmd == "refresh":
             __check()
             continue
 
-        if input_arr[0] == "ping":
+        if cmd == "ping":
             print("pong")
             continue
 
-        if  input_arr[0] == "month":
+        if  cmd == "month":
             __add_month()
             db_handler.monthly_report()
             continue
 
-        if input_arr[0] == "bot_test":
+        if cmd == "bot_test":
             db_handler.send_to_bot("test")
             continue
 
-        if input_arr[0] == "add_excel":
+        if cmd == "add_excel":
             print("Add excel command received. Functionality no implemented yet")
             continue
 
+        if cmd == "del":
+            print(f"Deleting check with id %s from the database", parsed.id)
+            db_handler.delete_check(parsed.id)
+            continue
+
+        if cmd == "add":
+            check = Check(generate_id(), parsed.amount, datetime.strptime(parsed.date, "%d.%m.%Y"), parsed.description, parsed.currencyCode)
+            db_handler.put_check(check)
+            print("Seems like success")
+            continue
+
         # if no if block hit
-        print(f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{input_arr[0]}'.")
+        print(f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{cmd}'.")
 
 def __print(msg: str) -> None:
     print(f"\r{msg}", flush=True)
@@ -115,5 +130,13 @@ if __name__ == '__main__':
 
     __token = get_key(__env, 'X_TOKEN')
     __acc = get_key(__env, 'ACCOUNT')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("cmd", type=str, nargs=1, help="The command to execute")
+    parser.add_argument("-d", "--date", type=str, required=False, default=datetime.today().strftime("%d.%m.%Y"), help="Date on the check")
+    parser.add_argument("-a", "--amount", type=float, required=False, help="Amount paid")
+    parser.add_argument("-n", "--description", "--name", type=str, required=False, help="Description of the check")
+    parser.add_argument("-c", "--currencyCode", type=int, required=False, default=978, help="Currency code of the check")
+    parser.add_argument("-id", "--id", type=str, required=False, help="ID of the check")
 
     asyncio.run(__main())

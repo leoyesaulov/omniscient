@@ -28,16 +28,18 @@ def __get_24h_statement():
     statement = requests.get(__get_url(time), headers={'X-Token': __token}).json()
     return statement
 
-def __process_check(check: dict):
-    result = Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
-    if not db_handler.is_check_in_db(result) and all([check['operationAmount'] <= 0, check['currencyCode'] != 980]):
-        __print(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
-        db_handler.send_to_bot(f"You have spent {result.amount} {get_currency_by_numeric_code(str(result.currency)).name} at {result.description} at {result.date}.")
-        db_handler.put_check(result)
+def prepare_check(check: dict) -> Check:
+    return Check(check['id'], abs(check['operationAmount'])/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
+
+def __process_check(check: Check):
+    if not db_handler.is_check_in_db(check) and check.amount >= 0:
+        __print(f"You have spent {check.amount} {get_currency_by_numeric_code(str(check.currency)).name} at {check.description} at {check.date}.")
+        db_handler.send_to_bot(f"You have spent {check.amount} {get_currency_by_numeric_code(str(check.currency)).name} at {check.description} at {check.date}.")
+        db_handler.put_check(check)
 
 def __process_statement(statement: list):
     for check in statement:
-        __process_check(check)
+        __process_check(prepare_check(check))
 
 def __check():
     __statement = __get_24h_statement()
@@ -85,13 +87,13 @@ async def __listen_to_input():
             continue
 
         if cmd == "del":
-            print(f"Deleting check with id %s from the database", parsed.id)
+            print(f"Deleting check with id {parsed.id} from the database")
             db_handler.delete_check(parsed.id)
             continue
 
         if cmd == "add":
             check = Check(generate_id(), parsed.amount, datetime.strptime(parsed.date, "%d.%m.%Y"), parsed.description, parsed.currencyCode)
-            db_handler.put_check(check)
+            __process_check(check)
             print("Seems like success")
             continue
 

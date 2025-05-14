@@ -24,12 +24,12 @@ def __get_url(from_date: datetime):
     return "https://api.monobank.ua/personal/statement/" + __acc + "/" + str(int(__to_unix(from_date)))
 
 def __get_24h_statement():
-    time = datetime.now() - timedelta(hours=24)
+    time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     statement = requests.get(__get_url(time), headers={'X-Token': __token}).json()
     return statement
 
 def prepare_check(check: dict) -> Check:
-    return Check(check['id'], abs(check['operationAmount'])/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
+    return Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
 
 def __process_check(check: Check):
     if not db_handler.is_check_in_db(check) and check.amount >= 0:
@@ -95,6 +95,10 @@ async def __listen_to_input():
             check = Check(generate_id(), parsed.amount, datetime.strptime(parsed.date, "%d.%m.%Y"), parsed.description, parsed.currencyCode)
             __process_check(check)
             print("Seems like success")
+            continue
+
+        if cmd == "day":
+            __get_24h_statement()
             continue
 
         # if no if block hit

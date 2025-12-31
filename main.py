@@ -110,21 +110,22 @@ async def listen_to_input():
 #     print(">>> ", end="", flush=True)
 
 async def run():
-    add_month()
-    print("Database seems up to date.")
-    await sleep(60)
-
-    while True:
-        check()
-
-        now = datetime.now()
-        print(f"Automated update has been performed at {now}.")
-        if now.hour == 21:
-            db_handler.daily_report()
-            if now.month < (now + timedelta(days=1)).month:
-                db_handler.monthly_report()
-
-        await sleep(3600)
+    # add_month()
+    # print("Database seems up to date.")
+    # await sleep(60)
+    #
+    # while True:
+    #     check()
+    #
+    #     now = datetime.now()
+    #     print(f"Automated update has been performed at {now}.")
+    #     if now.hour == 21:
+    #         db_handler.daily_report()
+    #         if now.month < (now + timedelta(days=1)).month:
+    #             db_handler.monthly_report()
+    #
+    #     await sleep(3600)
+    return 0
 
 
 async def main():

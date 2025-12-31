@@ -37,7 +37,10 @@ def health():
 
 @app.get("/add_payment/{secret}/{payment}")
 def add_payment(secret: str, payment: str):
+    if secret != API_SECRET:
+        return HTTPStatus(403)
 
+    print(f"received new payment: {payment}")
     return HTTPStatus(200)
 
 @app.get("/query/{secret}/{query}")

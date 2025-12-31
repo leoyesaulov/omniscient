@@ -5,31 +5,31 @@ from urllib.parse import quote_plus
 from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv, get_key
 
-__dotenv_path = find_dotenv()
-load_dotenv(__dotenv_path)
-__uri = "mongodb://%s:%s@%s" % (quote_plus(get_key(__dotenv_path, "MONGO_USR")), quote_plus(get_key(__dotenv_path, "MONGO_PWD")), quote_plus("192.168.2.31:27017"))
-__dbclient = pymongo.MongoClient(__uri)
-__db = __dbclient["Leo"]
-__checks = __db["checks"]
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+uri = "mongodb://%s:%s@%s" % (quote_plus(get_key(dotenv_path, "MONGO_USR")), quote_plus(get_key(dotenv_path, "MONGO_PWD")), quote_plus("192.168.2.31:27017"))
+dbclient = pymongo.MongoClient(uri)
+db = dbclient["Leo"]
+checks = db["checks"]
 
 def put_test() -> None:
-    __checks.insert_one({"test": 1})
+    checks.insert_one({"test": 1})
 
 def put_check(check: Check) -> None:
-    __checks.insert_one(check.__dict__)
+    checks.insert_one(check.__dict__)
 
 def delete_check(id: str):
-    __checks.delete_one({"id": id})
+    checks.delete_one({"id": id})
 
 def is_check_in_db(check: Check) -> bool:
-    return bool(__checks.find_one({"id": check.id}))
+    return bool(checks.find_one({"id": check.id}))
 
 def get_month():
     today = datetime.today()
     month_begin = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     print(f"Getting checks from {month_begin}")
     query = {"date": {"$gte": month_begin}}
-    return __checks.find(query)
+    return checks.find(query)
 
 def monthly_report() -> None:
     cursor = get_month()
@@ -53,7 +53,7 @@ def get_day():
     day_begin = today - timedelta(days=1)
     print(f"Getting checks from {day_begin}")
     query = {"date": {"$gte": day_begin}}
-    return __checks.find(query)
+    return checks.find(query)
 
 
 def daily_report() -> None:

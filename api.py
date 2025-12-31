@@ -1,5 +1,6 @@
 from http import HTTPStatus
 import requests
+import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import find_dotenv, load_dotenv, get_key
@@ -47,3 +48,8 @@ def add_payment(secret: str, payment: str):
 def query(secret: str, query: str):
 
     return HTTPStatus(200)
+
+async def runApi():
+    config = uvicorn.Config(app, port=5003)
+    server = uvicorn.Server(config)
+    await server.serve()

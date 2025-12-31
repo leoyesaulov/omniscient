@@ -10,6 +10,7 @@ from asyncio import sleep
 from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv, get_key
 from currency_codes import get_currency_by_numeric_code
+from api import runApi
 
 
 def generate_id(length=17):
@@ -127,7 +128,7 @@ async def run():
 
 
 async def main():
-    await asyncio.gather(run(), listen_to_input())
+    await asyncio.gather(run(), listen_to_input(), runApi())
 
 
 if __name__ == '__main__':

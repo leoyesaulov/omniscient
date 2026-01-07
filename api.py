@@ -48,7 +48,7 @@ def add_payment(secret: str, store: str, amount: bytes):
     # payment_arr = payment.split(sep="-")
     # store  = payment_arr[0]
     # amount = payment_arr[1]
-    amount_numerical = int(float(amount.decode()) * 100)
+    amount_numerical = int(float(amount.decode().replace(',', '.')) * 100)
 
     now = datetime.datetime.now()
     check = Check(state.get_new_id(), amount_numerical, now, store, EUR_CODE)

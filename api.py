@@ -50,7 +50,7 @@ def add_payment(secret: str, payment: str):
     amount = payment_arr[1]
 
     now = datetime.datetime.now()
-    check = Check(state.get_new_id(), int(float(amount)*100), now, store, EUR_CODE)
+    check = Check(state.get_new_id(), int(amount), now, store, EUR_CODE)
     db_handler.put_check(check)
 
     print(f"Received new payment: {amount} EUR in {store} at {now}")

@@ -1,6 +1,12 @@
+import socket
+
 # Common makros
 EUR_CODE = 978
 UAH_CODE = 980
+
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+MONGO_URI = f"{IPAddr}:27017"
 
 # Common state vars
 class State:

@@ -41,19 +41,20 @@ def send_to_bot(message: Message):
 # Add payment
 # We get data in form of "store-amount"
 @app.get("/add_payment/{secret}/{store}/{amount}")
-def add_payment(secret: str, store: str, amount: int):
+def add_payment(secret: str, store: str, amount: bytes):
     if secret != API_SECRET:
         return HTTPStatus(403)
 
     # payment_arr = payment.split(sep="-")
     # store  = payment_arr[0]
     # amount = payment_arr[1]
+    amount_numerical = int(float(amount.decode()) * 100)
 
     now = datetime.datetime.now()
-    check = Check(state.get_new_id(), amount, now, store, EUR_CODE)
+    check = Check(state.get_new_id(), amount_numerical, now, store, EUR_CODE)
     db_handler.put_check(check)
 
-    print(f"Received new payment: {amount/100} EUR in {store} at {now}")
+    print(f"Received new payment: {amount_numerical/100} EUR in {store} at {now}")
     return HTTPStatus(200)
 
 # Query the date range from database

@@ -5,6 +5,8 @@ services:
       - type: bind
         source: ./data
         target: /data/db
+    env_file:
+      - ".env"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USR}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PWD}

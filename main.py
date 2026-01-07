@@ -5,10 +5,11 @@ import asyncio
 import requests
 import argparse
 import db_handler
+import common
 from check import Check
 from asyncio import sleep
 from datetime import datetime, timedelta
-from dotenv import load_dotenv, find_dotenv, get_key
+from dotenv import get_key
 from currency_codes import get_currency_by_numeric_code
 from api import runApi
 
@@ -133,11 +134,10 @@ async def main():
 
 
 if __name__ == '__main__':
-    env = find_dotenv(".env")
-    load_dotenv(dotenv_path=env)
+    dotenv_path = common.dotenv_path
 
-    token = get_key(env, 'X_TOKEN')
-    acc = get_key(env, 'ACCOUNT')
+    token = get_key(dotenv_path, 'X_TOKEN')
+    acc = get_key(dotenv_path, 'ACCOUNT')
 
     parser = argparse.ArgumentParser()
     parser.add_argument("cmd", type=str, nargs=1, help="The command to execute")

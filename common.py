@@ -1,4 +1,8 @@
 import socket
+from dotenv import load_dotenv, find_dotenv, get_key
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 # Common makros
 EUR_CODE = 978

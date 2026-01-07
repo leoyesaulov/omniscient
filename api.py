@@ -4,14 +4,13 @@ import uvicorn
 import datetime
 from fastapi import FastAPI
 from pydantic import BaseModel
-from dotenv import find_dotenv, load_dotenv, get_key
+from dotenv import get_key
 from check import Check
 import db_handler
 import common
 from common import EUR_CODE
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+dotenv_path = common.dotenv_path
 state = common.state
 BOT_TOKEN = "" #get_key(dotenv_path, "BOT_API")
 RECIPIENT_CHAT_ID = "" #get_key(dotenv_path, "CHAT_ID")

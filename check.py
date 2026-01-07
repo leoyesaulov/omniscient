@@ -5,5 +5,5 @@ class Check:
         self.id = id
         self.amount = amount
         self.date = date
-        self.description = description
+        self.description = description      # the store
         self.currency = currencyCode

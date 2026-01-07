@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pymongo
 import requests
 from check import Check
@@ -72,6 +74,20 @@ Your checks averaged {check_avg} Euro this day.'''
         print(msg)
         send_to_bot(msg)
 
+# queries the database for all payments between two timestamps, returns total amount
+def query_date(start: datetime, end: datetime) -> float:
+    sum: int = 0
+    query = {
+        "$and": [
+            {"date": {"$gte": start}},
+            {"date": {"$lte": end}}
+        ]
+    }
+    cursor = checks.find(query)
+    for check in cursor:
+        sum += int(check["amount"] * 100)
+
+    return sum / 100
 
 def send_to_bot(msg: str):
     response = requests.post(url="http://127.0.0.1:6969/sendtobot", json={"text": msg}).json()

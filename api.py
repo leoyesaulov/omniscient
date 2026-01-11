@@ -59,13 +59,20 @@ def add_payment(secret: str, store: str, amount: bytes):
 
 # Query the date range from database
 # ToDo: get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
-@app.get("/query/{secret}/{query}")
-def query(secret: str, query: str):
+@app.get("/query/{secret}/{date_from}/{date_to}")
+def query(secret: str, date_from: str, date_to: str):
     if secret != API_SECRET:
         return HTTPStatus(403)
 
+    print(f"received query call with date_from: {date_from}, date_to: {date_to}")
 
-    return HTTPStatus(200)
+    # date format: 01.01.2026 through 31.12.2026
+    fromd = datetime.datetime.strptime(date_from, "%d.%m.%Y")
+    tod = datetime.datetime.strptime(date_to, "%d.%m.%Y")
+
+    total = db_handler.query_date(fromd, tod)
+
+    return {"total": total}
 
 @app.get("/")
 @app.get("/health")

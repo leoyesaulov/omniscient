@@ -38,16 +38,17 @@ def send_to_bot(message: Message):
 
 
 # Add payment
-# We get data in form of "store-amount"
+# We get data in form of "store/amount"
+# No need for extra decoding bc its handled by fastapi
 @app.get("/add_payment/{secret}/{store}/{amount}")
-def add_payment(secret: str, store: str, amount: bytes):
+def add_payment(secret: str, store: str, amount: str):
     if secret != API_SECRET:
         return HTTPStatus(403)
 
     # payment_arr = payment.split(sep="-")
     # store  = payment_arr[0]
     # amount = payment_arr[1]
-    amount_numerical = int(float(amount.decode().replace(',', '.')) * 100)
+    amount_numerical = int(float(amount.replace(',', '.')) * 100)
 
     now = datetime.datetime.now()
     print(f"Received new payment: {amount_numerical/100} EUR in {store} at {now}")
@@ -58,7 +59,7 @@ def add_payment(secret: str, store: str, amount: bytes):
     return HTTPStatus(200)
 
 # Query the date range from database
-# ToDo: get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
+# get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
 @app.get("/query/{secret}/{date_from}/{date_to}")
 def query(secret: str, date_from: str, date_to: str):
     if secret != API_SECRET:

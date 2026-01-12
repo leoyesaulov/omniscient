@@ -60,6 +60,7 @@ def add_payment(secret: str, store: str, amount: str):
 
 # Query the date range from database
 # get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
+# ToDo: add time to query
 @app.get("/query/{secret}/{date_from}/{date_to}")
 def query(secret: str, date_from: str, date_to: str):
     if secret != API_SECRET:

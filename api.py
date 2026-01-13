@@ -48,12 +48,14 @@ def add_payment(secret: str, store: str, amount: str):
     # payment_arr = payment.split(sep="-")
     # store  = payment_arr[0]
     # amount = payment_arr[1]
+    curr_code = EUR_CODE if amount.__contains__("€") else EUR_CODE # we will handle currency here, default be euro
+    amount.replace("\xa0€", "") # delete
     amount_numerical = int(float(amount.replace(',', '.')) * 100)
 
     now = datetime.datetime.now()
     print(f"Received new payment: {amount_numerical/100} EUR in {store} at {now}")
 
-    check = Check(state.get_new_id(), amount_numerical, now, store, EUR_CODE)
+    check = Check(state.get_new_id(), amount_numerical, now, store, curr_code)
     db_handler.put_check(check)
 
     return HTTPStatus(200)

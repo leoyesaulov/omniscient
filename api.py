@@ -78,6 +78,9 @@ def query(secret: str, date_from: str, date_to: str):
 
     return {"total": total}
 
+# ToDo: add calculation of available spending, add endpoint to configure
+
+
 @app.get("/")
 @app.get("/health")
 def health():

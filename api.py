@@ -60,9 +60,11 @@ def add_payment(secret: str, store: str, amount: str):
 
     return HTTPStatus(200)
 
+
+
 # Query the date range from database
 # get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
-# ToDo: add time to query
+# ToDo: add time to query (is it really needed?)
 @app.get("/query/{secret}/{date_from}/{date_to}")
 def query(secret: str, date_from: str, date_to: str):
     if secret != API_SECRET:
@@ -78,7 +80,7 @@ def query(secret: str, date_from: str, date_to: str):
 
     return {"total": total}
 
-# ToDo: add calculation of available spending, add endpoint to configure
+# ToDo: add calculation of available spending, add endpoint to configure (do I calculate backend or frontend?)
 
 
 @app.get("/")

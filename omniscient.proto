@@ -1,0 +1,29 @@
+syntax = "proto3";
+package omniscient;
+
+message Payment {
+  string store = 1;
+  int32 amount = 2;
+}
+
+message PaymentResponse {
+  bool success = 1;
+}
+
+message DateQuery {
+  string start_date = 1;
+  string stop_date = 2;
+}
+
+message QueryResponse {
+  bool success = 1;
+  int32 amount = 2;
+}
+
+service AddPayment{
+  rpc AddPayment (Payment) returns (PaymentResponse);
+}
+
+service Query{
+  rpc Query (DateQuery) returns (QueryResponse);
+}

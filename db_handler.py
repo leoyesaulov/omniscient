@@ -75,7 +75,7 @@ Your checks averaged {check_avg} Euro this day.'''
         send_to_bot(msg)
 
 # queries the database for all payments between two timestamps, returns total amount
-def query_date(start: datetime, end: datetime) -> float:
+def query_date(start: datetime, end: datetime) -> int:
     sum: int = 0
     query = {
         "$and": [
@@ -87,7 +87,7 @@ def query_date(start: datetime, end: datetime) -> float:
     for check in cursor:
         sum += int(check["amount"] * 100)
 
-    return sum / 100
+    return sum
 
 def send_to_bot(msg: str):
     response = requests.post(url="http://127.0.0.1:6969/sendtobot", json={"text": msg}).json()

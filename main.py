@@ -43,7 +43,7 @@ def process_statement(statement: list):
     for check in statement:
         process_check(prepare_check(check))
 
-def check():
+def refresh():
     statement = get_24h_statement()
     process_statement(statement)
 
@@ -68,7 +68,7 @@ async def listen_to_input():
         cmd = parsed.cmd[0]
 
         if cmd == "refresh":
-            check()
+            refresh()
             continue
 
         if cmd == "ping":

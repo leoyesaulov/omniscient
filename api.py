@@ -86,6 +86,7 @@ def query(date_from: str, date_to: str) -> int:
     # return {"total": total/100}
 
 # ToDo: add calculation of available spending, add endpoint to configure (do I calculate backend or frontend?)
+# ToDo: upd requirements
 
 # @app.get("/")
 # @app.get("/health")

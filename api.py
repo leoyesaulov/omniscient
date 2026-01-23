@@ -16,7 +16,7 @@ BOT_TOKEN = "" #get_key(dotenv_path, "BOT_API")
 RECIPIENT_CHAT_ID = "" #get_key(dotenv_path, "CHAT_ID")
 API_SECRET = get_key(dotenv_path, "API_SECRET")
 
-app = FastAPI()
+# app = FastAPI()
 
 class Message(BaseModel):
     text: str
@@ -30,7 +30,7 @@ def send_message(text: str):
         print("failed to send a message")
 
 # deprecated
-@app.post("/sendtobot")
+# @app.post("/sendtobot")
 def send_to_bot(message: Message):
     print("sending to bot")
     send_message(message.text)
@@ -40,7 +40,7 @@ def send_to_bot(message: Message):
 # Add payment
 # We get data in form of "store/amount"
 # No need for extra decoding bc its handled by fastapi
-@app.get("/add_payment/{secret}/{store}/{amount}")
+# @app.get("/add_payment/{secret}/{store}/{amount}")
 def add_payment(secret: str, store: str, amount: str):
     if secret != API_SECRET:
         return HTTPStatus(403)
@@ -65,7 +65,7 @@ def add_payment(secret: str, store: str, amount: str):
 # Query the date range from database
 # get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
 # ToDo: add time to query (is it really needed?)
-@app.get("/query/{secret}/{date_from}/{date_to}")
+# @app.get("/query/{secret}/{date_from}/{date_to}")
 def query(secret: str, date_from: str, date_to: str):
     if secret != API_SECRET:
         return HTTPStatus(403)
@@ -83,14 +83,16 @@ def query(secret: str, date_from: str, date_to: str):
 # ToDo: add calculation of available spending, add endpoint to configure (do I calculate backend or frontend?)
 
 
-@app.get("/")
-@app.get("/health")
+# @app.get("/")
+# @app.get("/health")
 def health():
     return {"message": "Ok"}
 
 
 
 async def runApi():
-    config = uvicorn.Config(app, port=5003)
-    server = uvicorn.Server(config)
-    await server.serve()
+    return
+
+    # config = uvicorn.Config(app, port=5003)
+    # server = uvicorn.Server(config)
+    # await server.serve()

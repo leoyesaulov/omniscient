@@ -1,10 +1,15 @@
+certifi==2026.1.4
+charset-normalizer==3.4.4
 currency-codes==23.6.4
 dnspython==2.8.0
 dotenv==0.9.9
 grpcio==1.76.0
 grpcio-tools==1.76.0
+idna==3.11
 protobuf==6.33.4
 pymongo==4.16.0
 python-dotenv==1.2.1
+requests==2.32.5
 setuptools==80.10.1
 typing_extensions==4.15.0
+urllib3==2.6.3

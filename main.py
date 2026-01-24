@@ -7,8 +7,7 @@ import argparse
 import db_handler
 import common
 from check import Check
-from asyncio import sleep
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import get_key
 from currency_codes import get_currency_by_numeric_code
 from api import runApi
@@ -43,7 +42,7 @@ def process_statement(statement: list):
     for check in statement:
         process_check(prepare_check(check))
 
-def check():
+def refresh():
     statement = get_24h_statement()
     process_statement(statement)
 
@@ -68,7 +67,7 @@ async def listen_to_input():
         cmd = parsed.cmd[0]
 
         if cmd == "refresh":
-            check()
+            refresh()
             continue
 
         if cmd == "ping":

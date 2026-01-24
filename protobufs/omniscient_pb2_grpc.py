@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import omniscient_pb2 as omniscient__pb2
+from protobufs import omniscient_pb2 as protobufs_dot_omniscient__pb2
 
 GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + ' but the generated code in omniscient_pb2_grpc.py depends on'
+        + ' but the generated code in protobufs/omniscient_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -36,8 +36,8 @@ class AddPaymentStub(object):
         """
         self.AddPayment = channel.unary_unary(
                 '/omniscient.AddPayment/AddPayment',
-                request_serializer=omniscient__pb2.Payment.SerializeToString,
-                response_deserializer=omniscient__pb2.PaymentResponse.FromString,
+                request_serializer=protobufs_dot_omniscient__pb2.Payment.SerializeToString,
+                response_deserializer=protobufs_dot_omniscient__pb2.PaymentResponse.FromString,
                 _registered_method=True)
 
 
@@ -55,8 +55,8 @@ def add_AddPaymentServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'AddPayment': grpc.unary_unary_rpc_method_handler(
                     servicer.AddPayment,
-                    request_deserializer=omniscient__pb2.Payment.FromString,
-                    response_serializer=omniscient__pb2.PaymentResponse.SerializeToString,
+                    request_deserializer=protobufs_dot_omniscient__pb2.Payment.FromString,
+                    response_serializer=protobufs_dot_omniscient__pb2.PaymentResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -84,8 +84,8 @@ class AddPayment(object):
             request,
             target,
             '/omniscient.AddPayment/AddPayment',
-            omniscient__pb2.Payment.SerializeToString,
-            omniscient__pb2.PaymentResponse.FromString,
+            protobufs_dot_omniscient__pb2.Payment.SerializeToString,
+            protobufs_dot_omniscient__pb2.PaymentResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -108,8 +108,8 @@ class QueryStub(object):
         """
         self.Query = channel.unary_unary(
                 '/omniscient.Query/Query',
-                request_serializer=omniscient__pb2.DateQuery.SerializeToString,
-                response_deserializer=omniscient__pb2.QueryResponse.FromString,
+                request_serializer=protobufs_dot_omniscient__pb2.DateQuery.SerializeToString,
+                response_deserializer=protobufs_dot_omniscient__pb2.QueryResponse.FromString,
                 _registered_method=True)
 
 
@@ -127,8 +127,8 @@ def add_QueryServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Query': grpc.unary_unary_rpc_method_handler(
                     servicer.Query,
-                    request_deserializer=omniscient__pb2.DateQuery.FromString,
-                    response_serializer=omniscient__pb2.QueryResponse.SerializeToString,
+                    request_deserializer=protobufs_dot_omniscient__pb2.DateQuery.FromString,
+                    response_serializer=protobufs_dot_omniscient__pb2.QueryResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -156,8 +156,8 @@ class Query(object):
             request,
             target,
             '/omniscient.Query/Query',
-            omniscient__pb2.DateQuery.SerializeToString,
-            omniscient__pb2.QueryResponse.FromString,
+            protobufs_dot_omniscient__pb2.DateQuery.SerializeToString,
+            protobufs_dot_omniscient__pb2.QueryResponse.FromString,
             options,
             channel_credentials,
             insecure,

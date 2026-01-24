@@ -1,8 +1,8 @@
 import grpc
 import datetime
 import db_handler
-import omniscient_pb2
-import omniscient_pb2_grpc
+from protobufs import omniscient_pb2
+from protobufs import omniscient_pb2_grpc
 
 from check import Check
 from concurrent import futures

@@ -19,6 +19,7 @@ class QueryServicer(omniscient_pb2_grpc.QueryServicer):
         # do we fr need to return status?? ToDo decide if return status at all
         amount = query(request.start_date, request.stop_date)
         resp = omniscient_pb2.QueryResponse(success=True, amount=amount)
+        print(f"Query processing successful. QueryResponse:\n{resp}")
         return resp
 
 # ToDo: handle currency, upd comments
@@ -48,7 +49,6 @@ def query(date_from: str, date_to: str) -> int:
     total = db_handler.query_date(fromd, tod)
 
     return total
-    # return {"total": total/100}
 
 # ToDo: add calculation of available spending, add endpoint to configure (do I calculate backend or frontend?)
 # ToDo: upd requirements

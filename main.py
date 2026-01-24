@@ -7,8 +7,7 @@ import argparse
 import db_handler
 import common
 from check import Check
-from asyncio import sleep
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import get_key
 from currency_codes import get_currency_by_numeric_code
 from api import runApi

@@ -35,9 +35,6 @@ async def main():
 if __name__ == '__main__':
     dotenv_path = common.dotenv_path
 
-    token = get_key(dotenv_path, 'X_TOKEN')
-    acc = get_key(dotenv_path, 'ACCOUNT')
-
     parser = argparse.ArgumentParser()
     parser.add_argument("cmd", type=str, nargs=1, help="The command to execute")
     parser.add_argument("-d", "--date", type=str, required=False, default=datetime.today().strftime("%d.%m.%Y"), help="Date on the check")

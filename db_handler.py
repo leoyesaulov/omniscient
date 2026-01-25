@@ -48,7 +48,6 @@ def monthly_report() -> None:
 Your checks averaged {check_avg} Euro this month.
 Your expenses averaged {day_avg} Euro per day this month.'''
     print(msg)
-    send_to_bot(msg)
 
 def get_day():
     today = datetime.today()
@@ -72,7 +71,6 @@ def daily_report() -> None:
         msg = f'''You have spent {out} Euro in the past 24h on groceries and stuff.
 Your checks averaged {check_avg} Euro this day.'''
         print(msg)
-        send_to_bot(msg)
 
 # queries the database for all payments between two timestamps, returns total amount
 def query_date(start: datetime, end: datetime) -> int:
@@ -88,7 +86,3 @@ def query_date(start: datetime, end: datetime) -> int:
         sum += int(check["amount"] * 100)
 
     return sum
-
-def send_to_bot(msg: str):
-    response = requests.post(url="http://127.0.0.1:6969/sendtobot", json={"text": msg}).json()
-    print(f"\rSent the message to bot.\nReceived response: {response}")

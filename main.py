@@ -1,63 +1,10 @@
-import time
-import string
-import random
 import asyncio
-import requests
 import argparse
 import db_handler
 import common
-from check import Check
 from datetime import datetime
 from dotenv import get_key
-from currency_codes import get_currency_by_numeric_code
 from api import runApi
-
-
-# Deprecate legacy monobank handling
-def generate_id(length=17):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for i in range(length))
-
-
-def to_unix(value: datetime):
-    return time.mktime(value.timetuple())
-
-def get_url(from_date: datetime):
-    return "https://api.monobank.ua/personal/statement/" + acc + "/" + str(int(to_unix(from_date)))
-
-def get_24h_statement():
-    time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    statement = requests.get(get_url(time), headers={'X-Token': token}).json()
-    return statement
-
-def prepare_check(check: dict) -> Check:
-    return Check(check['id'], check['operationAmount']/(-100), datetime.fromtimestamp(check['time']), check['description'], check['currencyCode'])
-
-def process_check(check: Check):
-    if not db_handler.is_check_in_db(check) and check.amount >= 0:
-        print(f"You have spent {check.amount} {get_currency_by_numeric_code(str(check.currency)).name} at {check.description} at {check.date}.")
-        db_handler.send_to_bot(f"You have spent {check.amount} {get_currency_by_numeric_code(str(check.currency)).name} at {check.description} at {check.date}.")
-        db_handler.put_check(check)
-
-def process_statement(statement: list):
-    for check in statement:
-        process_check(prepare_check(check))
-
-def refresh():
-    statement = get_24h_statement()
-    process_statement(statement)
-
-def get_month_statement():
-    time = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    statement = requests.get(get_url(time), headers={'X-Token': token}).json()
-    return statement
-
-def add_month():
-    statement = get_month_statement()
-    process_statement(statement)
-
-def add_excel(path: str):
-    print("Adding excel not implemented yet")
 
 async def listen_to_input():
     loop = asyncio.get_event_loop()
@@ -67,25 +14,9 @@ async def listen_to_input():
         parsed = parser.parse_args(user_input.split())
         cmd = parsed.cmd[0]
 
-        if cmd == "refresh":
-            refresh()
-            continue
 
         if cmd == "ping":
             print("pong")
-            continue
-
-        if  cmd == "month":
-            add_month()
-            db_handler.monthly_report()
-            continue
-
-        if cmd == "bot_test":
-            db_handler.send_to_bot("test")
-            continue
-
-        if cmd == "add_excel":
-            print("Add excel command received. Functionality no implemented yet")
             continue
 
         if cmd == "del":
@@ -93,44 +24,12 @@ async def listen_to_input():
             db_handler.delete_check(parsed.id)
             continue
 
-        if cmd == "add":
-            check = Check(generate_id(), parsed.amount, datetime.strptime(parsed.date, "%d.%m.%Y"), parsed.description, parsed.currencyCode)
-            process_check(check)
-            print("Seems like success")
-            continue
-
-        if cmd == "day":
-            get_24h_statement()
-            continue
-
         # if no if block hit
         print(f"I'm sorry, I didn't understand that.\nExpected one of: 'refresh'. Got '{cmd}'.")
 
-# def print(msg: str) -> None:
-#     print(f"\r{msg}", flush=True)
-#     print(">>> ", end="", flush=True)
-
-async def run():
-    # add_month()
-    # print("Database seems up to date.")
-    # await sleep(60)
-    #
-    # while True:
-    #     check()
-    #
-    #     now = datetime.now()
-    #     print(f"Automated update has been performed at {now}.")
-    #     if now.hour == 21:
-    #         db_handler.daily_report()
-    #         if now.month < (now + timedelta(days=1)).month:
-    #             db_handler.monthly_report()
-    #
-    #     await sleep(3600)
-    return 0
-
 
 async def main():
-    await asyncio.gather(run(), listen_to_input(), runApi())
+    await asyncio.gather(listen_to_input(), runApi())
 
 
 if __name__ == '__main__':

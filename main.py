@@ -13,6 +13,7 @@ from currency_codes import get_currency_by_numeric_code
 from api import runApi
 
 
+# Deprecate legacy monobank handling
 def generate_id(length=17):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for i in range(length))

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 class Check:
     def __init__(self, id: str, amount: int, date: datetime, description: str, currencyCode: int):

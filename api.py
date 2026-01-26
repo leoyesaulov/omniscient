@@ -22,7 +22,7 @@ class QueryServicer(omniscient_pb2_grpc.QueryServicer):
         print(f"Query processing successful. QueryResponse:\n{resp}")
         return resp
 
-# ToDo: handle currency, upd comments
+# ToDo: handle currency
 # Add payment
 def add_payment(store: str, amount: int) -> bool:
     now = datetime.datetime.now()
@@ -37,7 +37,6 @@ def add_payment(store: str, amount: int) -> bool:
 
 # Query the date range from database
 # get string with dates, process into datetime objects, call query_date(from, to) from db_handler, return total amount
-# ToDo: add time to query (is it really needed?)
 def query(date_from: str, date_to: str) -> int:
     print(f"received query call with date_from: {date_from}, date_to: {date_to}")
 
@@ -55,7 +54,7 @@ def query(date_from: str, date_to: str) -> int:
 
 
 # ToDo: refactor to concurrency instead of asyncio
-async def runApi():
+def runApi():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=3))
     omniscient_pb2_grpc.add_AddPaymentServicer_to_server(AddPaymentServicer(), server)
     omniscient_pb2_grpc.add_QueryServicer_to_server(QueryServicer(), server)
@@ -63,4 +62,4 @@ async def runApi():
     # doesnt block
     server.start()
     # this thread doesnt really have anything left to do so we block it
-    await server.wait_for_termination()
+    server.wait_for_termination()

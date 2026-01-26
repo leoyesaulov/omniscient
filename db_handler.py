@@ -1,12 +1,9 @@
-from typing import Tuple
-
-import pymongo
-import requests
 import common
+import pymongo
 from check import Check
+from dotenv import get_key
 from urllib.parse import quote_plus
 from datetime import datetime, timedelta
-from dotenv import get_key
 
 dotenv_path = common.dotenv_path
 uri = "mongodb://%s:%s@%s" % (quote_plus(get_key(dotenv_path, "MONGO_USR")), quote_plus(get_key(dotenv_path, "MONGO_PWD")), quote_plus(common.MONGO_URI))

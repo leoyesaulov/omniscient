@@ -1,5 +1,5 @@
 import socket
-from dotenv import load_dotenv, find_dotenv, get_key
+from dotenv import load_dotenv, find_dotenv
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)

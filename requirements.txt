@@ -6,7 +6,7 @@ dotenv==0.9.9
 grpcio==1.76.0
 grpcio-tools==1.76.0
 idna==3.11
-protobuf==7.34.0rc1
+protobuf==6.33.4
 pymongo==4.16.0
 python-dotenv==1.2.1
 requests==2.32.5

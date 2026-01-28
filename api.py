@@ -49,6 +49,15 @@ def query(date_from: str, date_to: str) -> int:
 
     return total
 
+# calculate info on spending trajectory, prepare to send back
+def spending_trajectory():
+    pass
+
+# configure monthly allowance available
+# use state.allowance for persistence
+def configure_monthly_allowance(new_allowance: int):
+    pass
+
 # ToDo: add calculation of available spending, add endpoint to configure (do I calculate backend or frontend?)
 # ToDo: upd requirements
 

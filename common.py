@@ -13,6 +13,7 @@ IPAddr = socket.gethostbyname(hostname)
 MONGO_URI = f"{IPAddr}:27017"
 
 # Common state vars
+# ToDo: add support for many variables, add monthly_allowance
 class State:
     def __init__(self):
         try:
